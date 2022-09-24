@@ -1,0 +1,30 @@
+{
+  "name": "musi6004-voting",
+  "version": "0.0.1",
+  "description": "",
+  "scripts": {
+    "prestart": "npm run clean && npm run build",
+    "start": "http-server dist",
+    "clean": "rimraf dist",
+    "build": "npm run clean && parcel build src/index.html",
+    "dev": "npm run clean && parcel src/index.html"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SkyIsTheLimit/musi6004-voting.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/SkyIsTheLimit/musi6004-voting/issues"
+  },
+  "homepage": "https://github.com/SkyIsTheLimit/musi6004-voting#readme",
+  "devDependencies": {
+    "rimraf": "^3.0.2"
+  },
+  "dependencies": {
+    "http-server": "^14.1.1",
+    "parcel": "^2.7.0"
+  }
+}
