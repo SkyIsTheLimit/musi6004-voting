@@ -5,7 +5,9 @@
  */
 
 import { v4 as uuidv4 } from 'uuid';
-import { Session, Vote } from './types';
+import { addDoc, collection, doc, getDoc, getDocs } from 'firebase/firestore';
+import { Session, Vote, VotingOption } from './types';
+import { db } from './connection';
 
 /**
  * Function to return a unique ID for the current user.
@@ -29,10 +31,35 @@ export const getUserId = () => {
  *
  * Returns null if no session available.
  */
-export async function getRecentlyCompletedSessionResults(): Promise<
-  Vote[] | null
-> {
-  return Promise.resolve(null);
+export async function getRecentlyCompletedSessionVotes(): Promise<Vote[]> {
+  const recentlyCompletedSessionDocRef = doc(
+    db,
+    'sessions',
+    'recently-completed'
+  );
+  const recentlyCompletedSession = await getDoc(
+    recentlyCompletedSessionDocRef
+  ).then((doc) => doc.data() as { id: string });
+
+  const votesDocRef = collection(
+    db,
+    'sessions',
+    recentlyCompletedSession.id,
+    'votes'
+  );
+  const votes = await getDocs(votesDocRef).then((data) => {
+    const votes: Vote[] = [];
+
+    data.forEach((doc) => votes.push(doc.data() as Vote));
+
+    return votes;
+  });
+
+  if (!votes) {
+    return Promise.reject('No recently completed session found.');
+  }
+
+  return Promise.resolve(votes);
 }
 
 /**
@@ -40,17 +67,45 @@ export async function getRecentlyCompletedSessionResults(): Promise<
  * are voting on. This is different from the session who's results are being used by the performers to play
  * the chosen score. That information can be obtained from the <code>getRecentlyCompletedSession</code> function.
  *
- * Returns null if no session is active.
  */
-export async function getInProgressSession(): Promise<Session | null> {
-  return Promise.resolve(null);
+export async function getInProgressSession(): Promise<Session> {
+  const inProgressSessionDocRef = doc(db, 'sessions', 'in-progress');
+  const inProgressSession = await getDoc(inProgressSessionDocRef).then(
+    (doc) => doc.data() as { id: string }
+  );
+
+  const sessionDocRef = doc(db, 'sessions', inProgressSession.id);
+  const session = await getDoc(sessionDocRef).then(
+    (doc) => doc.data() as Session
+  );
+
+  if (!session) {
+    return Promise.reject('No in progress session currently.');
+  }
+
+  return Promise.resolve({
+    ...session,
+    id: inProgressSession.id,
+  });
 }
 
 /**
  * Function that returns the votes for the currently active session.
  */
 export async function getVotesForInProgressSession(): Promise<Vote[]> {
-  return Promise.resolve([]);
+  return getInProgressSession()
+    .then((session) =>
+      getDocs(collection(db, 'votes')).then((docs) => ({
+        docs,
+        session,
+      }))
+    )
+    .then(({ docs, session }) => {
+      const votes: Vote[] = [];
+      docs.forEach((doc) => votes.push(doc.data() as Vote));
+
+      return votes.filter((vote) => vote.sessionId === session?.id);
+    });
 }
 
 /**
@@ -59,6 +114,21 @@ export async function getVotesForInProgressSession(): Promise<Vote[]> {
  *
  * @returns Boolean if the vote was sent successfully or not.
  */
-export async function sendVote(): Promise<Boolean> {
-  return Promise.resolve(false);
+export async function sendVote(vote: Vote): Promise<Boolean> {
+  const session = await getInProgressSession();
+
+  if (!session) {
+    return Promise.reject('No in progress session found!');
+  }
+
+  const sessionRef = await addDoc(
+    collection(db, 'sessions', session.id, 'votes'),
+    vote
+  );
+
+  if (sessionRef) {
+    return Promise.resolve(true);
+  } else {
+    return Promise.resolve(false);
+  }
 }

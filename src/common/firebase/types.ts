@@ -14,9 +14,8 @@ export interface Session {
 }
 
 export interface Vote {
-  id: string;
   userId: string;
   sessionId: string;
   when: number;
-  chosenOption: VotingOption;
+  color: string;
 }

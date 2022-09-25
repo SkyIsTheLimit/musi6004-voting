@@ -1,12 +1,15 @@
-import { db } from '../../common/firebase';
-import { collection, getDocs } from 'firebase/firestore';
+import {
+  getRecentlyCompletedSessionVotes,
+  sendVote,
+} from '../../common/firebase';
 
-async function load() {
-  const snapshot = await getDocs(collection(db, 'votes'));
+getRecentlyCompletedSessionVotes().then((votes) =>
+  console.log('Received votes', votes)
+);
 
-  snapshot.forEach((doc) => {
-    console.log('Doc', doc.data());
-  });
-}
-
-load();
+sendVote({
+  color: 'red',
+  sessionId: 'session-1',
+  userId: 'user-1',
+  when: new Date().getTime(),
+});
