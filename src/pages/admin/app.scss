@@ -1,0 +1,23 @@
+@import '../../common/styles/index';
+
+body {
+  @apply bg-neutral-900 text-neutral-400;
+}
+
+#play-button,
+#stop-button {
+  @apply hidden;
+  @apply items-center justify-center w-32 h-32  rounded-full md:w-32 md:h-32;
+
+  svg {
+    @apply w-20 h-20;
+  }
+}
+
+#play-button {
+  @apply text-green-200 bg-green-900;
+}
+
+#stop-button {
+  @apply text-red-200 bg-red-900;
+}

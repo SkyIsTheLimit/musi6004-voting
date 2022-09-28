@@ -9,8 +9,29 @@
     <link rel="stylesheet" href="./app.scss" />
   </head>
   <body>
-    <h1 class="mt-24 text-6xl text-center font-extralight">Results!</h1>
+    <canvas id="qrcode"></canvas>
 
+    <h1 class="mt-24 text-6xl text-center font-extralight" id="resultsHeader">Results Center</h1>
+
+    <h1 class="currColorHeader">Current Color</h1>
+    <div class="currColor" id="currentColor"></div>
+    
+    <div class="resultsGrid">
+      <div class="tableHeader" id="colors">Colors</div>
+      <div class="tableHeader" id="votes"># of Votes</div>
+      <div class="red" id="red"></div>
+      <div class="counts" id="redCount">0</div>
+      <div class="green" id="green"></div>
+      <div class="counts" id="greenCount">0</div>
+      <div class="yellow" id="yellow"></div>
+      <div class="counts" id="yellowCount">0</div>
+      <div class="blue" id="blue"></div>
+      <div class="counts" id="blueCount">0</div>
+      <div class="orange" id="orange"></div>
+      <div class="counts" id="orangeCount">0</div>
+    </div> 
+
+    <!--
     <div
       class="fixed px-16 py-8 bg-white border rounded-lg shadow-md bottom-8 left-8 border-neutral-100"
     >
@@ -19,6 +40,7 @@
       </h1>
       <canvas id="qrcode"></canvas>
     </div>
+    -->
 
     <script type="module" src="./app.ts"></script>
   </body>
