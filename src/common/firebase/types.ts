@@ -19,3 +19,21 @@ export interface Vote {
   when: number;
   color: string;
 }
+
+// Restricting the vote choices to these colors. If more colors needed add here.
+export type VoteColor = 'red' | 'green' | 'yellow' | 'blue' | 'orange' | 'pink';
+
+export interface AppData {
+  colors: {
+    red: number;
+    green: number;
+    blue: number;
+    yellow: number;
+    orange: number;
+    pink: number;
+  };
+  isStarted: boolean;
+  currentColor: string;
+  startTime: number;
+  timerAmt: number;
+}

@@ -5,9 +5,17 @@
  */
 
 import { v4 as uuidv4 } from 'uuid';
-import { addDoc, collection, doc, getDoc, getDocs } from 'firebase/firestore';
-import { Session, Vote, VotingOption } from './types';
-import { db } from './connection';
+import {
+  addDoc,
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  onSnapshot,
+  updateDoc,
+} from 'firebase/firestore';
+import { AppData, Session, Vote, VoteColor, VotingOption } from './types';
+import { app, db } from './connection';
 
 /**
  * Function to return a unique ID for the current user.
@@ -109,26 +117,44 @@ export async function getVotesForInProgressSession(): Promise<Vote[]> {
 }
 
 /**
- * Function to send the vote of the current user for the session that is in progress. The server
- * might not accept this vote if it finds out this user has already voted.
+ * Function to send the color specified to the backend to be either counted as a vote or substracted
+ * from the current votes. The shouldSubtract value indicates if the vote should be added (false) or
+ * substracted (true).
  *
- * @returns Boolean if the vote was sent successfully or not.
+ * @param color The color vote to be sent to the db.
+ * @param shouldSubtract Should this vote be subtracted. Default = false
  */
-export async function sendVote(vote: Vote): Promise<Boolean> {
-  const session = await getInProgressSession();
-
-  if (!session) {
-    return Promise.reject('No in progress session found!');
-  }
-
-  const sessionRef = await addDoc(
-    collection(db, 'sessions', session.id, 'votes'),
-    vote
+export async function sendVote(
+  color: VoteColor,
+  shouldSubtract: Boolean = false
+) {
+  const dataRef = await doc(db, 'app', 'data');
+  const data = await getDoc(dataRef).then(
+    (response) => response.data() as AppData
   );
 
-  if (sessionRef) {
-    return Promise.resolve(true);
-  } else {
-    return Promise.resolve(false);
-  }
+  data[color] += 1 * (shouldSubtract ? -1 : +1);
+
+  return await updateDoc(dataRef, { ...data });
+}
+
+export async function getAppData() {
+  const dataRef = await doc(db, 'app', 'data');
+  const data = await getDoc(dataRef).then(
+    (response) => response.data() as AppData
+  );
+
+  return data;
+}
+
+export async function writeAppData(appData: Partial<AppData>) {
+  const dataRef = await doc(db, 'app', 'data');
+
+  return await updateDoc(dataRef, { ...appData });
+}
+
+export async function subscribeToAppData(callback: (appData: AppData) => void) {
+  const dataRef = await doc(db, 'app', 'data');
+
+  onSnapshot(dataRef, (response) => callback(response.data() as AppData));
 }
