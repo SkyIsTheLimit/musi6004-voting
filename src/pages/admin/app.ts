@@ -1,6 +1,5 @@
 import {
   AppData,
-  getAppData,
   subscribeToAppData,
   writeAppData,
 } from '../../common/firebase';
@@ -15,13 +14,17 @@ import './app.scss';
 
   // Get a handle to the play and stop button.
   const $playButton = $('#play-button'),
-    $stopButton = $('#stop-button');
+    $stopButton = $('#stop-button'),
+    $startPanel = $('#start'),
+    $stopPanel = $('#stop'),
+    $timeRemaining = $('#time-remaining');
 
   $playButton.addEventListener('click', playButtonClicked);
   $stopButton.addEventListener('click', stopButtonClicked);
 
   // Store the  app data for access to this closure.
   let appData: AppData;
+  let timer: any;
 
   /**
    * This function is responsible for rendering the UI based on the app data given to it.
@@ -31,12 +34,33 @@ import './app.scss';
   function renderAppState(_appData: AppData) {
     appData = _appData;
 
+    if (timer) {
+      clearInterval(timer);
+    }
+
     if (_appData.isStarted) {
-      $stopButton.style.display = 'inline-flex';
-      $playButton.style.display = 'none';
+      $stopPanel.style.display = 'inline-flex';
+      $startPanel.style.display = 'none';
     } else {
-      $stopButton.style.display = 'none';
-      $playButton.style.display = 'inline-flex';
+      $stopPanel.style.display = 'none';
+      $startPanel.style.display = 'inline-flex';
+    }
+
+    if (appData.isStarted) {
+      timer = setInterval(() => {
+        const remaining =
+          appData.timerAmt -
+          (Math.floor((new Date().getTime() - appData.startTime) / 1000) %
+            appData.timerAmt);
+
+        $timeRemaining.innerText = `${remaining} s`;
+      }, 250);
+    } else {
+      if (timer) {
+        clearInterval(timer);
+      }
+
+      $timeRemaining.innerText = 'NOT RUNNING';
     }
   }
 

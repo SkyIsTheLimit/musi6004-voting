@@ -1,62 +1,64 @@
-import { doc } from 'firebase/firestore';
+import { AppData, subscribeToAppData } from '../../common/firebase';
 import qrcode from 'qrcode';
-import { getRecentlyCompletedSessionVotes, getVotesForInProgressSession } from '../../common/firebase';
+import './app.scss';
 
-const canvas = document.getElementById('qrcode');
-qrcode.toCanvas(canvas, `${location.origin}/app`, {
-  scale: 5,
-});
+(async function (global) {
+  // Please dont run on nodejs.
+  if (!global.document) throw 'Please run in browser environment';
 
-// get votes and sort them
-//const votes = getVotesForInProgressSession();
-//console.log('votes: ' + votes);
+  const canvas = document.getElementById('qrcode');
+  qrcode.toCanvas(canvas, `${location.origin}/app`, {
+    scale: 3,
+  });
 
+  // JQuery style $ object.
+  const $ = document.querySelector.bind(document);
+  const $currentColor = $('#currentColor');
+  const $timeRemaining = $('#time-remaining');
 
-export function findWinner() {
-  // [red, green, yellow, blue, orange]
-  var voteArray = [3, 1, 5, 0, 2];
-  var colorIndex = ['red', 'green', 'yellow', 'blue', 'orange'];
+  // Store the  app data for access to this closure.
+  let appData: AppData;
+  let timer: any;
 
-  //console.log(voteArray);
+  /**
+   * This function is responsible for rendering the UI based on the app data given to it.
+   *
+   * @param _appData The most recent app data.
+   */
+  function renderAppState(_appData: AppData) {
+    appData = _appData;
 
-  //voteArray.sort(function(a, b){return b-a});
+    if (timer) {
+      clearInterval(timer);
+    }
 
-  var mostVotes = voteArray[0];
-  var mostVotesIndex = 0;
+    $currentColor.style.backgroundColor = `${appData.currentColor}`;
 
-  for (let i = 1; i < 4; i++) {
-    if (voteArray[i] > mostVotes) {
-      mostVotes = voteArray[i];
-      mostVotesIndex = i;
+    Object.keys(appData.colors).forEach((color) => {
+      const votes = appData.colors[color];
+
+      $(`#${color}Count`).innerText = votes;
+    });
+
+    if (appData.isStarted) {
+      timer = setInterval(() => {
+        const remaining =
+          appData.timerAmt -
+          (Math.floor((new Date().getTime() - appData.startTime) / 1000) %
+            appData.timerAmt);
+
+        $timeRemaining.style.display = 'inline-block';
+        $timeRemaining.innerText = `${remaining} s`;
+      }, 250);
+    } else {
+      if (timer) {
+        clearInterval(timer);
+      }
+
+      $timeRemaining.innerText = 'NOT RUNNING';
     }
   }
 
-  var winner = colorIndex[mostVotesIndex];
-  var winnerIndex = mostVotesIndex;
-  //console.log("winner: " + winner);
-
-  //console.log(voteArray);
-  
-  return winnerIndex;
-}
-
-
-var winnerBox = document.getElementById("currentColor"); 
-
-//if (winnerBox != undefined) {
-  //winnerBox.style.backgroundColor = '#ff0000';
-//}
-
-export function changeCurrColor(winnerIndex) {
-  var hexCodes = ['#ff0000', '#35E529', '#fff000', '#0000ff', '#ff9933'];
-  var winnerHexCode = hexCodes[winnerIndex];
-
-  console.log('winner hex color: ' + winnerHexCode);
-
-  if (winnerBox != undefined) {
-    //winnerBox.style.backgroundColor = winnerHexCode;
-    winnerBox.style.backgroundColor = '#fff000';
-  }
-  console.log('changeCurrColor executed');
-}
-
+  // Alright, let's go.
+  subscribeToAppData((appData) => renderAppState(appData));
+})(globalThis);

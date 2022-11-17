@@ -1,17 +1,22 @@
 @import '../../common/styles/index';
 
 body {
-  @apply bg-neutral-900 text-neutral-400;
+  @apply bg-neutral-100 text-neutral-800;
 }
 
 #play-button,
 #stop-button {
-  @apply hidden;
-  @apply items-center justify-center w-32 h-32  rounded-full md:w-32 md:h-32;
+  @apply items-center justify-center w-32 h-32 rounded-full md:w-32 md:h-32;
+  @apply cursor-pointer;
 
   svg {
     @apply w-20 h-20;
   }
+}
+
+#start,
+#stop {
+  @apply hidden;
 }
 
 #play-button {
@@ -20,4 +25,12 @@ body {
 
 #stop-button {
   @apply text-red-200 bg-red-900;
+}
+
+input {
+  @apply border border-neutral-800;
+
+  &:disabled {
+    @apply border-neutral-300 text-neutral-400;
+  }
 }
