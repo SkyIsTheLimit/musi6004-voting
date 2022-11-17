@@ -1,14 +1,4 @@
-import {
-  getInProgressSession,
-  getRecentlyCompletedSessionVotes,
-  sendVote,
-  VoteColor,
-} from '../../common/firebase';
-import { changeCurrColor, findWinner } from '../results/app';
-
-getRecentlyCompletedSessionVotes().then((votes) =>
-  console.log('Received votes', votes)
-);
+import { sendVote, VoteColor } from '../../common/firebase';
 
 // vote buttons
 const redButton = document.getElementById('red');
@@ -17,15 +7,7 @@ const yellowButton = document.getElementById('yellow');
 const blueButton = document.getElementById('blue');
 const orangeButton = document.getElementById('orange');
 
-function handleClick(color: VoteColor) {
-  getInProgressSession().then((session) => {
-    // Disable buttons.
-
-    sendVote(color).then(() => {
-      // Enable buttons.
-    });
-  });
-}
+function handleClick(color: VoteColor) {}
 
 redButton?.addEventListener('click', () => handleClick('red'));
 greenButton?.addEventListener('click', () => handleClick('green'));
@@ -62,9 +44,4 @@ function startTimer() {
   //console.log('sessionEnd?: ' + sessionEnd);
 }
 
-function setWinner() {
-  var winnerIndex = findWinner();
-  console.log('winner: ' + winnerIndex);
-  changeCurrColor(winnerIndex);
-  console.log('setWinner executed');
-}
+function setWinner() {}
