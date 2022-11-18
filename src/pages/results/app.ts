@@ -14,7 +14,9 @@ import './app.scss';
   // JQuery style $ object.
   const $ = document.querySelector.bind(document);
   const $currentColor = $('#currentColor');
+  const $currentColorContainer = $('#currentColorContainer');
   const $timeRemaining = $('#time-remaining');
+  const $resultsGrid = $('#resultsGrid');
 
   // Store the  app data for access to this closure.
   let appData: AppData;
@@ -45,8 +47,10 @@ import './app.scss';
         const remaining =
           appData.timerAmt -
           (Math.floor((new Date().getTime() - appData.startTime) / 1000) %
-            appData.timerAmt);
+            (appData.timerAmt + 1));
 
+        $currentColorContainer.style.display = 'block';
+        $resultsGrid.style.display = 'grid';
         $timeRemaining.style.display = 'inline-block';
         $timeRemaining.innerText = `${remaining} s`;
       }, 250);
@@ -55,6 +59,8 @@ import './app.scss';
         clearInterval(timer);
       }
 
+      $currentColorContainer.style.display = 'none';
+      $resultsGrid.style.display = 'none';
       $timeRemaining.innerText = 'NOT RUNNING';
     }
   }

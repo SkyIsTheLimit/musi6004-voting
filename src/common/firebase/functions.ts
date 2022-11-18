@@ -42,7 +42,7 @@ export async function sendVote(
     (response) => response.data() as AppData
   );
 
-  data[color] += 1 * (shouldSubtract ? -1 : +1);
+  data.colors[color] += 1 * (shouldSubtract ? -1 : +1);
 
   return await updateDoc(dataRef, { ...data });
 }

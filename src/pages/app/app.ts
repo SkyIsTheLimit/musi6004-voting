@@ -7,7 +7,11 @@ const yellowButton = document.getElementById('yellow');
 const blueButton = document.getElementById('blue');
 const orangeButton = document.getElementById('orange');
 
-function handleClick(color: VoteColor) {}
+let isVoted = {};
+function handleClick(color: VoteColor) {
+  isVoted[color] = !isVoted[color];
+  sendVote(color, !isVoted[color]);
+}
 
 redButton?.addEventListener('click', () => handleClick('red'));
 greenButton?.addEventListener('click', () => handleClick('green'));
@@ -16,7 +20,7 @@ blueButton?.addEventListener('click', () => handleClick('blue'));
 orangeButton?.addEventListener('click', () => handleClick('orange'));
 
 // timer
-var intervalID = setInterval(startTimer, 1000);
+// var intervalID = setInterval(startTimer, 1000);
 const secondsDisplay = document.getElementById('seconds');
 
 var timerLength = 10;
