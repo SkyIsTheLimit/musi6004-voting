@@ -1,3 +1,4 @@
+import { doc } from 'firebase/firestore';
 import { sendVote, VoteColor } from '../../common/firebase';
 import { AppData, subscribeToAppData } from '../../common/firebase';
 
@@ -16,25 +17,31 @@ const pinkButton = document.getElementById('pink');
 
 
 
+
 let isVoted = {};
 function handleClick(color: VoteColor, self) {
+
   isVoted[color] = !isVoted[color];
   sendVote(color, !isVoted[color]);
 
   console.log("clicked: " + color);
-  self.style.background = '#808080';
+
   
+  self.style.backgroundColor = '#808080';
+  //disable buttons
+
 }
 
-redButton?.addEventListener('click', () => handleClick('red', self));
-greenButton?.addEventListener('click', () => handleClick('green', self));
-yellowButton?.addEventListener('click', () => handleClick('yellow', self));
-blueButton?.addEventListener('click', () => handleClick('blue', self));
-orangeButton?.addEventListener('click', () => handleClick('orange', self));
-pinkButton?.addEventListener('click', () => handleClick('pink', self));
+redButton?.addEventListener('click', () => handleClick('red', redButton));
+greenButton?.addEventListener('click', () => handleClick('green', greenButton));
+yellowButton?.addEventListener('click', () => handleClick('yellow', yellowButton));
+blueButton?.addEventListener('click', () => handleClick('blue', blueButton));
+orangeButton?.addEventListener('click', () => handleClick('orange', orangeButton));
+pinkButton?.addEventListener('click', () => handleClick('pink', pinkButton));
 
 function renderAppState(_appData: AppData) {
   const secondsDisplay = document.getElementById('seconds');
+
   appData = _appData;
 
   if (timer) {
@@ -48,10 +55,14 @@ function renderAppState(_appData: AppData) {
         appData.timerAmt -
         (Math.floor((new Date().getTime() - appData.startTime) / 1000) %
           (appData.timerAmt + 1));
-
+      
+      if (remaining == 0) {
+        resetButtonColors();
+      }
       
       if (secondsDisplay) {
-        secondsDisplay.textContent = `${remaining} s`;
+        secondsDisplay.textContent = remaining.toString();
+        console.log("secondDisplay remaining.toString(): " + remaining.toString());
       }
     }, 250);
   } else {
@@ -62,11 +73,16 @@ function renderAppState(_appData: AppData) {
       secondsDisplay.textContent = `NOT RUNNING`;
     }
   }
+  
 }
 
+// Alright, let's go.
+subscribeToAppData((appData) => renderAppState(appData));
 
-function resetButtons(VoteColor) {
-
+function resetButtonColors() {
+  if (redButton) {
+    redButton.style.backgroundColor = 'red';
+  }
 }
  
 
