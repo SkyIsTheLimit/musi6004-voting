@@ -8,14 +8,12 @@ let appData: AppData;
 let timer: any;
 
 // vote buttons
-const redButton = document.getElementById('red');
-const greenButton = document.getElementById('green');
-const yellowButton = document.getElementById('yellow');
-const blueButton = document.getElementById('blue');
-const orangeButton = document.getElementById('orange');
-const pinkButton = document.getElementById('pink');
-
-
+const redButton = document.getElementById('red') as HTMLButtonElement | null;
+const greenButton = document.getElementById('green') as HTMLButtonElement | null;
+const yellowButton = document.getElementById('yellow') as HTMLButtonElement | null;
+const blueButton = document.getElementById('blue') as HTMLButtonElement | null;
+const orangeButton = document.getElementById('orange') as HTMLButtonElement | null;
+const pinkButton = document.getElementById('pink') as HTMLButtonElement | null;
 
 
 let isVoted = {};
@@ -23,12 +21,13 @@ function handleClick(color: VoteColor, self) {
 
   isVoted[color] = !isVoted[color];
   sendVote(color, !isVoted[color]);
+  //console.log("clicked: " + color);
 
-  console.log("clicked: " + color);
-
-  
   self.style.backgroundColor = '#808080';
   //disable buttons
+  disableBtns();
+
+  //self.disabled = true;
 
 }
 
@@ -48,7 +47,6 @@ function renderAppState(_appData: AppData) {
     clearInterval(timer);
   }
 
-
   if (appData.isStarted) {
     timer = setInterval(() => {
       const remaining =
@@ -58,11 +56,12 @@ function renderAppState(_appData: AppData) {
       
       if (remaining == 0) {
         resetButtonColors();
+        enableBtns();
       }
       
       if (secondsDisplay) {
         secondsDisplay.textContent = remaining.toString();
-        console.log("secondDisplay remaining.toString(): " + remaining.toString());
+        //console.log("secondDisplay remaining.toString(): " + remaining.toString());
       }
     }, 250);
   } else {
@@ -73,11 +72,11 @@ function renderAppState(_appData: AppData) {
       secondsDisplay.textContent = `NOT RUNNING`;
     }
   }
-  
 }
 
 // Alright, let's go.
 subscribeToAppData((appData) => renderAppState(appData));
+
 
 function resetButtonColors() {
   if (redButton) {
@@ -99,4 +98,28 @@ function resetButtonColors() {
     orangeButton.style.backgroundColor = 'orange';
   }
 }
- 
+
+function disableBtns() {
+  let btns = [redButton, yellowButton, greenButton, blueButton, orangeButton, pinkButton];
+
+  btns.forEach((btn) => {
+    if (btn) {
+      btn.disabled = true;
+    }
+
+    console.log("btns disabled");
+  });
+}
+
+function enableBtns() {
+  let btns = [redButton, yellowButton, greenButton, blueButton, orangeButton, pinkButton];
+
+  btns.forEach((btn) => {
+    if (btn) {
+      btn.disabled = false;
+    }
+
+    console.log("btns enabled");
+  });
+}
+
