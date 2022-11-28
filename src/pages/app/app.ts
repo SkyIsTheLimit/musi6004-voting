@@ -83,42 +83,20 @@ function resetButtonColors() {
   if (redButton) {
     redButton.style.backgroundColor = 'red';
   }
+  if (yellowButton) {
+    yellowButton.style.backgroundColor = 'yellow';
+  }
+  if (greenButton) {
+    greenButton.style.backgroundColor = 'green';
+  }
+  if (pinkButton) {
+    pinkButton.style.backgroundColor = 'pink';
+  }
+  if (blueButton) {
+    blueButton.style.backgroundColor = 'blue';
+  }
+  if (orangeButton) {
+    orangeButton.style.backgroundColor = 'orange';
+  }
 }
  
-
-
-
-
-
-/*
-// timer
-// var intervalID = setInterval(startTimer, 1000);
-const secondsDisplay = document.getElementById('seconds');
-
-var timerLength = 10;
-var currentTime = 10;
-
-//var sessionEnd = false;
-
-function startTimer() {
-  //console.log(currentTime);
-
-  if (currentTime == 0) {
-    currentTime = timerLength + 1;
-    //console.log(currentTime);
-    //sessionEnd = true;
-    setWinner();
-  }
-  //else sessionEnd = false;
-
-  currentTime = currentTime - 1;
-
-  if (secondsDisplay != null) {
-    secondsDisplay.textContent = currentTime.toString();
-  }
-
-  //console.log('sessionEnd?: ' + sessionEnd);
-}
-
-function setWinner() {}
-*/
