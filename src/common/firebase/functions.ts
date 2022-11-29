@@ -35,14 +35,15 @@ export const getUserId = () => {
  */
 export async function sendVote(
   color: VoteColor,
-  shouldSubtract: Boolean = false
+  //shouldSubtract: Boolean = false
 ) {
   const dataRef = await doc(db, 'app', 'data');
   const data = await getDoc(dataRef).then(
     (response) => response.data() as AppData
   );
 
-  data.colors[color] += 1 * (shouldSubtract ? -1 : +1);
+  data.colors[color] += 1;
+  //* (shouldSubtract ? -1 : +1);
 
   return await updateDoc(dataRef, { ...data });
 }

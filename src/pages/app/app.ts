@@ -20,7 +20,7 @@ let isVoted = {};
 function handleClick(color: VoteColor, self) {
 
   isVoted[color] = !isVoted[color];
-  sendVote(color, !isVoted[color]);
+  sendVote(color);
   //console.log("clicked: " + color);
 
   self.style.backgroundColor = '#808080';
@@ -71,6 +71,9 @@ function renderAppState(_appData: AppData) {
     if (secondsDisplay) {
       secondsDisplay.textContent = `NOT RUNNING`;
     }
+    
+    resetButtonColors();
+    enableBtns();
   }
 }
 
